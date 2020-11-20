@@ -1,0 +1,15 @@
+{% extends 'sprout_tools/base.html' %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+    <h1> Наши трены </h1>
+    {% for video in videos %}
+        <div class="alert alert-warning mt-2">
+            <h3>{{ video.title }}</h3>
+            <a href="{{ video.video_link }}">Link to video</a>
+        </div>
+    {% endfor %}
+{% endblock %}
