@@ -1,0 +1,90 @@
+import requests
+import os
+from pathlib import Path
+from typing import Generator
+from urllib.parse import urljoin
+from dataclasses import dataclass
+from datetime import timedelta
+from dotenv import load_dotenv
+from sprout_utills import handle_embedded_code
+
+load_dotenv()
+
+
+@dataclass
+class Video:
+    video_id: str
+    title: str
+    folder_id: str
+    description: str
+    duration: float
+    video_link: str
+    privacy_type: int
+    tags: list
+    created_at: str
+    updated_at: str
+    plays: int
+
+
+DOMAIN = 'https://api.sproutvideo.com/'
+env_path = Path('/home/rubanov//PycharmProjects/sv_playground/sv_playground/') / '.env'
+load_dotenv(dotenv_path=env_path)
+KEY = os.getenv("SPROUT_API_KEY")
+
+
+class SproutApiClient:
+    def get_videos(self) -> Generator[Video, None, None]:
+        url = urljoin(DOMAIN, 'v1/videos/')
+        while url:
+            page = self.get_page(url)
+
+            for raw_video in page.get('videos'):
+                yield Video(
+                    video_id=raw_video['id'],
+                    title=raw_video['title'],
+                    folder_id=raw_video['folder_id'],
+                    description=raw_video['description'],
+                    duration=timedelta(raw_video['duration']),
+                    video_link=handle_embedded_code(raw_video['embed_code']),
+                    privacy_type=raw_video['privacy'],
+                    tags=raw_video['tags'],
+                    created_at=raw_video['created_at'],
+                    updated_at=raw_video['updated_at'],
+                    plays=raw_video['plays'],
+                )
+
+            url = page.get('next_page')
+
+    def get_page(self, url):
+        response = requests.get(
+            url,
+            headers={'SproutVideo-Api-Key': KEY},
+            data={'per_page': 100},
+        )
+
+        res_json = response.json()
+
+        return res_json
+
+    def set_payload(self):
+        # dictx = {'a': 'a',
+        #          'b': 'b',
+        #          'video_id': None}
+        #
+        # result = []
+        #
+        # for video in client.get_videos():
+        #     # print(video)
+        #
+        #     dicty = copy(dictx)
+        #     dicty['video_id'] = video.id
+        #     result.append(copy(dicty))
+        #
+        #     print(result)
+        pass
+
+
+client = SproutApiClient()
+
+for video in client.get_videos():
+    print(video)

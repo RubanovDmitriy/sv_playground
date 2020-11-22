@@ -3,30 +3,36 @@ from datetime import timedelta
 
 
 class Video(models.Model):
-    video_id = models.CharField('Video ID', max_length=50)
+    video_id = models.CharField(
+        'Video ID',
+        max_length=20,
+        unique=True,
+    )
     title = models.CharField('Название', max_length=100)
+    folder_id = models.CharField('Уровень', max_length=20, default='')
     description = models.CharField(
         'Описание',
         max_length=500,
         null=True,
         blank=True
     )
-    duration = models.DurationField('Продолжительность', default=timedelta(seconds=6300.0))
+    duration = models.DurationField('Продолжительность', default=timedelta(seconds=1.0))
     video_link = models.URLField('Ссылка', max_length=300)
-    privacy_type = models.IntegerField('Тип доступа',)
+    privacy_type = models.IntegerField('Тип доступа')
     tags = models.JSONField('Тэги',)
     created_at = models.DateTimeField(
         'Создано',
-        auto_now_add=True
+        auto_now_add=False,
+        auto_now=False,
     )
     updated_at = models.DateTimeField(
         'Обновлено',
-        auto_now=True
+        auto_now_add=False,
+        auto_now=False,
     )
     plays = models.IntegerField(
         'Количество проигрываний',
-        null=True,
-        blank=True
+        default=0,
     )
 
     def __str__(self):
