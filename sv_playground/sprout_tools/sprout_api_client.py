@@ -6,13 +6,14 @@ from urllib.parse import urljoin
 from dataclasses import dataclass
 from datetime import timedelta
 from dotenv import load_dotenv
-from sprout_utills import handle_embedded_code
+from sv_playground.sprout_tools.sprout_utills import handle_embedded_code
+# from models import Video
 
 load_dotenv()
 
 
 @dataclass
-class Video:
+class VideoDataClass:
     video_id: str
     title: str
     folder_id: str
@@ -27,19 +28,19 @@ class Video:
 
 
 DOMAIN = 'https://api.sproutvideo.com/'
-env_path = Path('/home/rubanov//PycharmProjects/sv_playground/sv_playground/') / '.env'
+env_path = Path('/PycharmProjects/sv_playground/sv_playground/') / '.env'
 load_dotenv(dotenv_path=env_path)
 KEY = os.getenv("SPROUT_API_KEY")
 
 
 class SproutApiClient:
-    def get_videos(self) -> Generator[Video, None, None]:
+    def get_videos(self) -> Generator[VideoDataClass, None, None]:
         url = urljoin(DOMAIN, 'v1/videos/')
         while url:
             page = self.get_page(url)
 
             for raw_video in page.get('videos'):
-                yield Video(
+                yield VideoDataClass(
                     video_id=raw_video['id'],
                     title=raw_video['title'],
                     folder_id=raw_video['folder_id'],
@@ -54,6 +55,30 @@ class SproutApiClient:
                 )
 
             url = page.get('next_page')
+
+    def get_one_video(self) -> Generator[VideoDataClass, None, None]:
+        url = urljoin(DOMAIN, 'v1/videos/4c9ddcb51014e7c4c4')
+        while url:
+            page = self.get_page(url)
+
+            yield VideoDataClass(
+                    video_id=page['id'],
+                    title=page['title'],
+                    folder_id=page['folder_id'],
+                    description=page['description'],
+                    duration=timedelta(page['duration']),
+                    video_link=handle_embedded_code(page['embed_code']),
+                    privacy_type=page['privacy'],
+                    tags=page['tags'],
+                    created_at=page['created_at'],
+                    updated_at=page['updated_at'],
+                    plays=page['plays'],
+                )
+
+            url = page.get('next_page')
+
+    def insert_video_to_db(self):
+        pass
 
     def get_page(self, url):
         response = requests.get(
@@ -86,5 +111,5 @@ class SproutApiClient:
 
 client = SproutApiClient()
 
-for video in client.get_videos():
+for video in client.get_one_video():
     print(video)
