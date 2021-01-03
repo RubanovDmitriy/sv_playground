@@ -26,6 +26,15 @@ class VideoDataClass:
     plays: int
 
 
+@dataclass
+class FolderDataClass:
+    folder_id: str
+    name: str
+    parent_id: str
+    created_at: str
+    updated_at: str
+
+
 DOMAIN = 'https://api.sproutvideo.com/'
 env_path = Path('/PycharmProjects/sv_playground/sv_playground/') / '.env'
 load_dotenv(dotenv_path=env_path)
@@ -55,6 +64,19 @@ class SproutApiClient:
 
             url = page.get('next_page')
 
+    def get_folders(self) -> Generator[FolderDataClass, None, None]:
+        url = urljoin(DOMAIN, 'v1/folders/')
+        page = self.get_page(url)
+
+        for raw_folders in page.get('folders'):
+            yield FolderDataClass(
+                folder_id=raw_folders['id'],
+                name=raw_folders['name'],
+                parent_id=raw_folders['parent_id'],
+                created_at=raw_folders['created_at'],
+                updated_at=raw_folders['updated_at'],
+            )
+
     def get_one_video(self) -> Generator[VideoDataClass, None, None]:
         url = urljoin(DOMAIN, 'v1/videos/4c9ddcb51014e7c4c4')
         while url:
@@ -75,9 +97,6 @@ class SproutApiClient:
                 )
 
             url = page.get('next_page')
-
-    def insert_video_to_db(self):
-        pass
 
     def get_page(self, url):
         response = requests.get(
@@ -106,9 +125,3 @@ class SproutApiClient:
         #
         #     print(result)
         pass
-
-
-client = SproutApiClient()
-
-for video in client.get_one_video():
-    print(video)

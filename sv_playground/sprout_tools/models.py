@@ -9,7 +9,10 @@ class Video(models.Model):
         unique=True,
     )
     title = models.CharField('Название', max_length=100)
-    folder_id = models.CharField('Уровень', max_length=20, default='')
+    folder_id = models.CharField(
+        'Уровень',
+        max_length=20,
+        default='')
     description = models.CharField(
         'Описание',
         max_length=500,
@@ -41,3 +44,35 @@ class Video(models.Model):
     class Meta:
         verbose_name = 'Video'
         verbose_name_plural = 'Videos'
+
+
+class Folder(models.Model):
+    folder_id = models.CharField(
+        'Folder ID',
+        max_length=15,
+        unique=True,
+    )
+    name = models.CharField('Название', max_length=100)
+    parent_id = models.CharField(
+        'Parent',
+        max_length=100,
+        null=True,
+        blank=True
+    )
+    created_at = models.DateTimeField(
+        'Создано',
+        auto_now_add=False,
+        auto_now=False,
+    )
+    updated_at = models.DateTimeField(
+        'Обновлено',
+        auto_now_add=False,
+        auto_now=False,
+    )
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = 'Folder'
+        verbose_name_plural = 'Folders'
