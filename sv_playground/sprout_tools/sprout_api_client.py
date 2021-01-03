@@ -6,8 +6,7 @@ from urllib.parse import urljoin
 from dataclasses import dataclass
 from datetime import timedelta
 from dotenv import load_dotenv
-from sv_playground.sprout_tools.sprout_utills import handle_embedded_code
-# from models import Video
+from sprout_tools.sprout_utills import handle_embedded_code
 
 load_dotenv()
 
