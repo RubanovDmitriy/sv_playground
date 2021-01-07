@@ -53,12 +53,6 @@ class Folder(models.Model):
         unique=True,
     )
     name = models.CharField('Название', max_length=100)
-    parent_id = models.CharField(
-        'Parent',
-        max_length=100,
-        null=True,
-        blank=True
-    )
     created_at = models.DateTimeField(
         'Создано',
         auto_now_add=False,
@@ -71,7 +65,7 @@ class Folder(models.Model):
     )
 
     def __str__(self):
-        return self.title
+        return self.name
 
     class Meta:
         verbose_name = 'Folder'

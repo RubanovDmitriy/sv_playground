@@ -30,7 +30,6 @@ class VideoDataClass:
 class FolderDataClass:
     folder_id: str
     name: str
-    parent_id: str
     created_at: str
     updated_at: str
 
@@ -72,7 +71,6 @@ class SproutApiClient:
             yield FolderDataClass(
                 folder_id=raw_folders['id'],
                 name=raw_folders['name'],
-                parent_id=raw_folders['parent_id'],
                 created_at=raw_folders['created_at'],
                 updated_at=raw_folders['updated_at'],
             )
