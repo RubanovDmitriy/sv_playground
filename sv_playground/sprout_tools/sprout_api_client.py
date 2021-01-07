@@ -17,7 +17,7 @@ class VideoDataClass:
     title: str
     folder_id: str
     description: str
-    duration: float
+    duration: timedelta
     video_link: str
     privacy_type: int
     tags: list
@@ -30,6 +30,15 @@ class VideoDataClass:
 class FolderDataClass:
     folder_id: str
     name: str
+    created_at: str
+    updated_at: str
+
+
+@dataclass
+class LoginDataClass:
+    login_id: str
+    email: str
+    access_grants: list
     created_at: str
     updated_at: str
 
@@ -75,23 +84,18 @@ class SproutApiClient:
                 updated_at=raw_folders['updated_at'],
             )
 
-    def get_one_video(self) -> Generator[VideoDataClass, None, None]:
-        url = urljoin(DOMAIN, 'v1/videos/4c9ddcb51014e7c4c4')
+    def get_logins(self) -> Generator[LoginDataClass, None, None]:
+        url = urljoin(DOMAIN, 'v1/logins/')
         while url:
             page = self.get_page(url)
 
-            yield VideoDataClass(
-                    video_id=page['id'],
-                    title=page['title'],
-                    folder_id=page['folder_id'],
-                    description=page['description'],
-                    duration=timedelta(page['duration']),
-                    video_link=handle_embedded_code(page['embed_code']),
-                    privacy_type=page['privacy'],
-                    tags=page['tags'],
-                    created_at=page['created_at'],
-                    updated_at=page['updated_at'],
-                    plays=page['plays'],
+            for raw_login in page.get('logins'):
+                yield LoginDataClass(
+                    login_id=raw_login['id'],
+                    email=raw_login['email'],
+                    access_grants=raw_login['access_grants'],
+                    created_at=raw_login['created_at'],
+                    updated_at=raw_login['updated_at'],
                 )
 
             url = page.get('next_page')

@@ -28,7 +28,7 @@ class Command(BaseCommand):
                 )
                 item.save()
 
-            self.stdout.write(self.style.SUCCESS('Videos is successfully extracted'))
+            self.stdout.write(self.style.SUCCESS(f'{video.title} is successfully extracted'))
 
 
 

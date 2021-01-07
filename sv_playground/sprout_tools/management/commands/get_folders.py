@@ -21,9 +21,4 @@ class Command(BaseCommand):
                 )
                 item.save()
 
-            self.stdout.write(self.style.SUCCESS(f'{folder} is successfully extracted'))
-
-
-
-
-
+            self.stdout.write(self.style.SUCCESS(f'{folder.name} is successfully extracted'))
