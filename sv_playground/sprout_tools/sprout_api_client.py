@@ -38,7 +38,6 @@ class FolderDataClass:
 class LoginDataClass:
     login_id: str
     email: str
-    access_grants: list
     created_at: str
     updated_at: str
 
@@ -93,7 +92,6 @@ class SproutApiClient:
                 yield LoginDataClass(
                     login_id=raw_login['id'],
                     email=raw_login['email'],
-                    access_grants=raw_login['access_grants'],
                     created_at=raw_login['created_at'],
                     updated_at=raw_login['updated_at'],
                 )

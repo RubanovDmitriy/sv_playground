@@ -70,3 +70,29 @@ class Folder(models.Model):
     class Meta:
         verbose_name = 'Folder'
         verbose_name_plural = 'Folders'
+
+
+class Login(models.Model):
+    login_id = models.CharField(
+        'Login ID',
+        max_length=15,
+        unique=True,
+    )
+    email = models.CharField('Email', max_length=50)
+    created_at = models.DateTimeField(
+        'Создано',
+        auto_now_add=False,
+        auto_now=False,
+    )
+    updated_at = models.DateTimeField(
+        'Обновлено',
+        auto_now_add=False,
+        auto_now=False,
+    )
+
+    def __str__(self):
+        return self.email
+
+    class Meta:
+        verbose_name = 'Login'
+        verbose_name_plural = 'Logins'
