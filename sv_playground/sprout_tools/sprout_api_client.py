@@ -6,7 +6,8 @@ from urllib.parse import urljoin
 from dataclasses import dataclass
 from datetime import timedelta
 from dotenv import load_dotenv
-from sprout_tools.sprout_utills import handle_embedded_code
+from sprout_tools.sprout_utills import handle_embedded_code, create_payload
+import json
 
 load_dotenv()
 
@@ -109,19 +110,13 @@ class SproutApiClient:
 
         return res_json
 
-    def set_payload(self):
-        # dictx = {'a': 'a',
-        #          'b': 'b',
-        #          'video_id': None}
-        #
-        # result = []
-        #
-        # for video in client.get_videos():
-        #     # print(video)
-        #
-        #     dicty = copy(dictx)
-        #     dicty['video_id'] = video.id
-        #     result.append(copy(dicty))
-        #
-        #     print(result)
-        pass
+    def post_access_grants(self, login_id):
+        url = urljoin(DOMAIN, 'v1/access_grants/bulk')
+        body = create_payload(login_id)
+        for payload in body:
+            json_payload = json.dumps(payload)
+            r = requests.post(
+                url,
+                headers={'SproutVideo-Api-Key': KEY},
+                data=json_payload
+            )
