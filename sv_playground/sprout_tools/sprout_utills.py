@@ -1,4 +1,3 @@
-import json
 from copy import copy
 from bs4 import BeautifulSoup
 from sprout_tools.models import Video
