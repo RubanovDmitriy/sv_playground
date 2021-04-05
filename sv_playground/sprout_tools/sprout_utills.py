@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from sprout_tools.models import Video
 
 MAKE_FOLDER_ID = '3598d8bc131ebe'
+BEGINNERS_FOLDER_ID = '4898d9b51e1ac0'
 
 
 def handle_embedded_code(iframe):
@@ -10,8 +11,8 @@ def handle_embedded_code(iframe):
     return soup.iframe['src']
 
 
-def create_payload(login_id):
-    video_model = Video.objects.all().order_by('id')
+def create_video_payload(login_id, access='all'):
+    video_model = Video.objects.exclude(folder_id=MAKE_FOLDER_ID).order_by('id')
 
     access_grant_template = {
         "login_id": login_id,
@@ -24,9 +25,12 @@ def create_payload(login_id):
 
     result = []
 
+    if access == 'all':
+        pass
+    elif access == 'beginners':
+        video_model = Video.objects.filter(folder_id=BEGINNERS_FOLDER_ID).order_by('id')
+
     for video in video_model:
-        if video.folder_id == '3598d8bc131ebe':
-            continue
         access_grant = copy(access_grant_template)
         access_grant['video_id'] = video.video_id
         result.append(copy(access_grant))

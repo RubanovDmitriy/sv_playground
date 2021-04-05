@@ -6,7 +6,7 @@ from urllib.parse import urljoin
 from dataclasses import dataclass
 from datetime import timedelta
 from dotenv import load_dotenv
-from sprout_tools.sprout_utills import handle_embedded_code, create_payload
+from sprout_tools.sprout_utills import handle_embedded_code, create_video_payload
 import json
 
 load_dotenv()
@@ -99,6 +99,35 @@ class SproutApiClient:
 
             url = page.get('next_page')
 
+    @staticmethod
+    def post_login(email, password):
+        url = urljoin(DOMAIN, 'v1/logins')
+        payload = {
+            "email": email,
+            "password": password
+        }
+        json_payload = json.dumps(payload)
+        r = requests.post(
+            url,
+            headers={'SproutVideo-Api-Key': KEY},
+            data=json_payload
+        )
+        if r.status_code == 201:
+            return True
+        return False
+
+    @staticmethod
+    def delete_login(login_id):
+        url = urljoin(DOMAIN, f'v1/logins/{login_id}')
+        r = requests.delete(
+            url,
+            headers={'SproutVideo-Api-Key': KEY},
+        )
+        print(r.status_code)
+        if r.status_code == 200:
+            return True
+        return False
+
     def get_page(self, url):
         response = requests.get(
             url,
@@ -110,9 +139,9 @@ class SproutApiClient:
 
         return res_json
 
-    def post_access_grants(self, login_id):
+    def post_access_grants(self, login_id, access='all'):
         url = urljoin(DOMAIN, 'v1/access_grants/bulk')
-        body = create_payload(login_id)
+        body = create_video_payload(login_id, access)
         for payload in body:
             json_payload = json.dumps(payload)
             r = requests.post(
